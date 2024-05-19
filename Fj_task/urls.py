@@ -16,17 +16,25 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from main_app.views import home, login_page, register_page
+from main_app.views import *
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
-    path('', home, name='home'),
-    path('home/', home, name="money"),      
-    path('admin/', admin.site.urls),         
-    path('login/', login_page, name='login_page'),   
+    path('home/', home, name='home'),
+    path('admin/', admin.site.urls),
+    path('login/', login_page, name='login_page'),
     path('register/', register_page, name='register'),
+    path('add_income/', add_income, name='add_income'),
+    path('edit_income/<int:pk>/', edit_income, name='edit_income'),
+    path('delete_income/<int:pk>/', delete_income, name='delete_income'),
+    path('add_expense/', add_expense, name='add_expense'),
+    path('edit_expense/<int:pk>/', edit_expense, name='edit_expense'),
+    path('delete_expense/<int:pk>/', delete_expense, name='delete_expense'),
+    path('add_transaction/', add_transaction, name='add_transaction'),
+    path('edit_transaction/<int:pk>/', edit_transaction, name='edit_transaction'),
+    path('delete_transaction/<int:pk>/', delete_transaction, name='delete_transaction'),
 ]
 
 if settings.DEBUG:
