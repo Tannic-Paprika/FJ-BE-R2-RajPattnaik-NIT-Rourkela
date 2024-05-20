@@ -3,43 +3,187 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>Dashboard</title>
     {% load static %}
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <!-- Bootstrap CSS -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <h1>Home</h1>
-    <h2>Incomes</h2>
-    <a href="{% url 'add_income' %}">Add Income</a>
-    <ul>
-        {% for income in incomes %}
-            <li>{{ income.description }} - {{ income.amount }} - {{ income.date }}
-                <a href="{% url 'edit_income' income.id %}">Edit</a>
-                <a href="{% url 'delete_income' income.id %}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Dashboard</h1>
+        
+        <div class="row mb-5">
+            <!-- Income Section -->
+            <div class="col-md-4">
+                <h2>Incomes</h2>
+                <a href="{% url 'add_income' %}" class="btn btn-primary mb-2">Add Income</a>
+                <ul class="list-group">
+                    {% for income in incomes %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ income.description }}</strong><br>
+                                <small>{{ income.date }}</small><br>
+                                <span class="badge badge-success">{{ income.amount }}</span>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_income' income.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'delete_income' income.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-    <h2>Expenses</h2>
-    <a href="{% url 'add_expense' %}">Add Expense</a>
-    <ul>
-        {% for expense in expenses %}
-            <li>{{ expense.category }} - {{ expense.amount }}
-                <a href="{% url 'edit_expense' expense.id %}">Edit</a>
-                <a href="{% url 'delete_expense' expense.id %}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
+            <!-- Expense Section -->
+            <div class="col-md-4">
+                <h2>Expenses</h2>
+                <a href="{% url 'add_expense' %}" class="btn btn-primary mb-2">Add Expense</a>
+                <ul class="list-group">
+                    {% for expense in expenses %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ expense.category }}</strong><br>
+                                <span class="badge badge-danger">{{ expense.amount }}</span>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_expense' expense.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'delete_expense' expense.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
 
-    <h2>Transactions</h2>
-    <a href="{% url 'add_transaction' %}">Add Transaction</a>
-    <ul>
-        {% for transaction in transactions %}
-            <li>{{ transaction.description }} - {{ transaction.amount }} - {{ transaction.date }}
-                <a href="{% url 'edit_transaction' transaction.id %}">Edit</a>
-                <a href="{% url 'delete_transaction' transaction.id %}">Delete</a>
-            </li>
-        {% endfor %}
-    </ul>
+            <!-- Transaction Section -->
+            <div class="col-md-4">
+                <h2>Transactions</h2>
+                <a href="{% url 'add_transaction' %}" class="btn btn-primary mb-2">Add Transaction</a>
+                <ul class="list-group">
+                    {% for transaction in transactions %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ transaction.description }}</strong><br>
+                                <small>{{ transaction.date }}</small><br>
+                                <span class="badge badge-info">{{ transaction.amount }}</span>
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_transaction' transaction.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'delete_transaction' transaction.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Income vs Expenses</h3>
+                <canvas id="incomeExpenseChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <h3>Savings</h3>
+                <canvas id="savingsChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Monthly Report Section -->
+<div class="row mt-5">
+    <div class="col-12">
+        <h2>Monthly Report</h2>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Total Income</th>
+                    <th>Total Expenses</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for income in monthly_income %}
+                    <tr>
+                        <td>{{ income.month|date:"F Y" }}</td>
+                        <td>{{ income.total }}</td>
+                        <td>
+                            {% for expense in monthly_expenses %}
+                                {% if expense.month == income.month %}
+                                    {{ expense.total }}
+                                {% endif %}
+                            {% endfor %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <!-- Chart.js Scripts -->
+    <script>
+        // Income vs Expenses Chart
+        var ctx1 = document.getElementById('incomeExpenseChart').getContext('2d');
+        var incomeExpenseChart = new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: ['Income', 'Expenses'],
+                datasets: [{
+                    label: 'Amount',
+                    data: [
+                        {{ total_income }},
+                        {{ total_expenses }}
+                    ],
+                    backgroundColor: [
+                        'rgba(75, 192, 192, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        // Savings Chart
+        var ctx2 = document.getElementById('savingsChart').getContext('2d');
+        var savingsChart = new Chart(ctx2, {
+            type: 'pie',
+            data: {
+                labels: ['Savings', 'Expenses'],
+                datasets: [{
+                    data: [
+                        {{ total_savings }},
+                        {{ total_expenses }}
+                    ],
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.2)',
+                        'rgba(255, 99, 132, 0.2)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(255, 99, 132, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            }
+        });
+    </script>
 </body>
 </html>

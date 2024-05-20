@@ -15,3 +15,8 @@ class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transactions
         fields = ['description', 'date', 'amount']
+
+class BudgetGoalForm(forms.ModelForm):
+    class Meta:
+        model = BudgetGoal
+        fields = ['category', 'goal_amount']

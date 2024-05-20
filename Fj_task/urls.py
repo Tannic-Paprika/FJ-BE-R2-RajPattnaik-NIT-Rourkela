@@ -35,6 +35,10 @@ urlpatterns = [
     path('add_transaction/', add_transaction, name='add_transaction'),
     path('edit_transaction/<int:pk>/', edit_transaction, name='edit_transaction'),
     path('delete_transaction/<int:pk>/', delete_transaction, name='delete_transaction'),
+    path('budget-goals/add/', add_budget_goal, name='add_budget_goal'),
+    path('budget-goals/edit/<int:budget_goal_id>/', edit_budget_goal, name='edit_budget_goal'),
+    path('budget-goals/delete/<int:budget_goal_id>/', delete_budgetgoal, name='delete_budget_goal'),
+
 ]
 
 if settings.DEBUG:

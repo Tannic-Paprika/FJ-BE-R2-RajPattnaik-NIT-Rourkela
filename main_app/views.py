@@ -4,6 +4,8 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from .forms import *
 from django.contrib.auth.models import User
+from django.db.models import Sum,F
+from django.db.models.functions import TruncMonth
 from .models import *
 
 @login_required
@@ -12,11 +14,25 @@ def home(request):
     expenses = Expenses.objects.filter(user=request.user)
     transactions = Transactions.objects.filter(user=request.user)
 
-    return render(request, 'home.html', {
+    total_income = sum(income.amount for income in incomes)
+    total_expenses = sum(expense.amount for expense in expenses)
+    total_savings = total_income - total_expenses
+
+    monthly_income = incomes.annotate(month=TruncMonth('date')).values('month').annotate(total=Sum('amount')).order_by('month')
+    monthly_expenses = expenses.annotate(month=TruncMonth('date')).values('month').annotate(total=Sum('amount')).order_by('month')
+
+    context = {
         'incomes': incomes,
         'expenses': expenses,
         'transactions': transactions,
-    })
+        'total_income': total_income,
+        'total_expenses': total_expenses,
+        'total_savings': total_savings,
+        'monthly_income': monthly_income,
+        'monthly_expenses': monthly_expenses,
+    }
+
+    return render(request, 'home.html', context)
 
 @login_required
 def add_income(request):
@@ -117,6 +133,39 @@ def delete_transaction(request, pk):
         transaction.delete()
         return redirect('home')
     return render(request, 'confirm_delete.html', {'object': transaction})
+
+@login_required
+def add_budget_goal(request):
+    if request.method == 'POST':
+        form = BudgetGoalForm(request.POST)
+        if form.is_valid():
+            budget_goal = form.save(commit=False)
+            budget_goal.user = request.user
+            budget_goal.save()
+            return redirect('budget_goals')
+    else:
+        form = BudgetGoalForm()
+    return render(request, 'budget_form.html', {'form': form})
+
+@login_required
+def edit_budget_goal(request, budget_goal_id):
+    budget_goal = BudgetGoal.objects.get(id=budget_goal_id)
+    if request.method == 'POST':
+        form = BudgetGoalForm(request.POST, instance=budget_goal)
+        if form.is_valid():
+            form.save()
+            return redirect('budget_goals')
+    else:
+        form = BudgetGoalForm(instance=budget_goal)
+    return render(request, 'budget_form.html', {'form': form})
+
+@login_required
+def delete_budgetgoal(request, pk):
+    budgetgoal = get_object_or_404(BudgetGoal, pk=pk, user=request.user)
+    if request.method == "POST":
+        budgetgoal.delete()
+        return redirect('home')
+    return render(request, 'confirm_delete.html', {'object': budgetgoal})
 
 @login_required
 def login_page(request):
