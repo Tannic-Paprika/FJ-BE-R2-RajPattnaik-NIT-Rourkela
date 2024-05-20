@@ -1,0 +1,2 @@
+client id - 862943091685-vj9dn4792mfbi7rheh9495rerile4g8p.apps.googleusercontent.com
+client secret - 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

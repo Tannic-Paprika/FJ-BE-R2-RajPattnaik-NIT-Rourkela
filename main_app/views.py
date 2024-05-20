@@ -7,12 +7,14 @@ from django.contrib.auth.models import User
 from django.db.models import Sum,F
 from django.db.models.functions import TruncMonth
 from .models import *
+from django.core.mail import send_mail
 
 @login_required
 def home(request):
     incomes = IncomeSource.objects.filter(user=request.user)
     expenses = Expenses.objects.filter(user=request.user)
     transactions = Transactions.objects.filter(user=request.user)
+    budget_goals = BudgetGoal.objects.filter(user=request.user)
 
     total_income = sum(income.amount for income in incomes)
     total_expenses = sum(expense.amount for expense in expenses)
@@ -30,6 +32,7 @@ def home(request):
         'total_savings': total_savings,
         'monthly_income': monthly_income,
         'monthly_expenses': monthly_expenses,
+        'budget_goals': budget_goals,
     }
 
     return render(request, 'home.html', context)
@@ -142,7 +145,7 @@ def add_budget_goal(request):
             budget_goal = form.save(commit=False)
             budget_goal.user = request.user
             budget_goal.save()
-            return redirect('budget_goals')
+            return redirect('home')
     else:
         form = BudgetGoalForm()
     return render(request, 'budget_form.html', {'form': form})
@@ -154,7 +157,7 @@ def edit_budget_goal(request, budget_goal_id):
         form = BudgetGoalForm(request.POST, instance=budget_goal)
         if form.is_valid():
             form.save()
-            return redirect('budget_goals')
+            return redirect('home')
     else:
         form = BudgetGoalForm(instance=budget_goal)
     return render(request, 'budget_form.html', {'form': form})
@@ -166,6 +169,18 @@ def delete_budgetgoal(request, pk):
         budgetgoal.delete()
         return redirect('home')
     return render(request, 'confirm_delete.html', {'object': budgetgoal})
+
+def check_budget_overrun(user):
+    budget_goals = BudgetGoal.objects.filter(user=user)
+    for goal in budget_goals:
+        total_expenses = Expenses.objects.filter(user=user, category=goal.category).aggregate(total=Sum('amount'))['total']
+        if total_expenses and total_expenses > goal.goal_amount:
+            send_budget_overrun_notification(user.email, goal.category.category, goal.goal_amount, total_expenses)
+
+def send_budget_overrun_notification(email, category, goal_amount, total_expenses):
+    subject = 'Budget Overrun Notification'
+    message = f'Your expenses for category {category} have exceeded the budget goal. \n\nBudget Goal: {goal_amount} \nTotal Expenses: {total_expenses}'
+    send_mail(subject, message, 'tannicpaprika@gmail.com', [email])
 
 @login_required
 def login_page(request):

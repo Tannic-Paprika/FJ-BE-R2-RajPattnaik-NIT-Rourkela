@@ -4,20 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    {% load static %}
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
-    <!-- Bootstrap CSS -->
-    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <h1 class="text-center mb-4">Dashboard</h1>
         
-        <div class="row mb-5">
-            <!-- Income Section -->
-            <div class="col-md-4">
+        <!-- Add Income, Expense, Transaction Sections -->
+        <div class="row">
+            <div class="column">
                 <h2>Incomes</h2>
                 <a href="{% url 'add_income' %}" class="btn btn-primary mb-2">Add Income</a>
                 <ul class="list-group">
@@ -37,8 +34,7 @@
                 </ul>
             </div>
 
-            <!-- Expense Section -->
-            <div class="col-md-4">
+            <div class="column">
                 <h2>Expenses</h2>
                 <a href="{% url 'add_expense' %}" class="btn btn-primary mb-2">Add Expense</a>
                 <ul class="list-group">
@@ -57,8 +53,7 @@
                 </ul>
             </div>
 
-            <!-- Transaction Section -->
-            <div class="col-md-4">
+            <div class="column">
                 <h2>Transactions</h2>
                 <a href="{% url 'add_transaction' %}" class="btn btn-primary mb-2">Add Transaction</a>
                 <ul class="list-group">
@@ -79,54 +74,72 @@
             </div>
         </div>
 
+        <!-- Budget Goals Section -->
+        <div class="row">
+            <div class="column">
+                <h2 class="mb-3">Budget Goals</h2>
+                <a href="{% url 'add_budget_goal' %}" class="btn btn-primary mb-2">Add Budget Goal</a>
+                <ul class="list-group">
+                    {% for goal in budget_goals %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <strong>{{ goal.category }}</strong><br>
+                                Goal Amount: {{ goal.goal_amount }}
+                            </div>
+                            <div>
+                                <a href="{% url 'edit_budget_goal' goal.id %}" class="btn btn-sm btn-warning">Edit</a>
+                                <a href="{% url 'delete_budget_goal' goal.id %}" class="btn btn-sm btn-danger">Delete</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
         <!-- Charts Section -->
         <div class="row">
-            <div class="col-md-6">
+            <div class="column">
                 <h3>Income vs Expenses</h3>
                 <canvas id="incomeExpenseChart"></canvas>
             </div>
-            <div class="col-md-6">
+            <div class="column">
                 <h3>Savings</h3>
                 <canvas id="savingsChart"></canvas>
             </div>
         </div>
+    
+        <!-- Monthly Report Section -->
+        <div class="row">
+            <div class="column">
+                <h2>Monthly Report</h2>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Month</th>
+                            <th>Total Income</th>
+                            <th>Total Expenses</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for income in monthly_income %}
+                            <tr>
+                                <td>{{ income.month|date:"F Y" }}</td>
+                                <td>{{ income.total }}</td>
+                                <td>
+                                    {% for expense in monthly_expenses %}
+                                        {% if expense.month == income.month %}
+                                            {{ expense.total }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
 
-    <!-- Monthly Report Section -->
-<div class="row mt-5">
-    <div class="col-12">
-        <h2>Monthly Report</h2>
-        <table class="table table-bordered">
-            <thead>
-                <tr>
-                    <th>Month</th>
-                    <th>Total Income</th>
-                    <th>Total Expenses</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for income in monthly_income %}
-                    <tr>
-                        <td>{{ income.month|date:"F Y" }}</td>
-                        <td>{{ income.total }}</td>
-                        <td>
-                            {% for expense in monthly_expenses %}
-                                {% if expense.month == income.month %}
-                                    {{ expense.total }}
-                                {% endif %}
-                            {% endfor %}
-                        </td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    </div>
-</div>
-
-    <!-- Bootstrap JS and dependencies -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <!-- Chart.js Scripts -->
     <script>
         // Income vs Expenses Chart

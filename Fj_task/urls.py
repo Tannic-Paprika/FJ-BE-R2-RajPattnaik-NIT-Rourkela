@@ -15,7 +15,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path,include
 from main_app.views import *
 from django.conf import settings
 from django.conf.urls.static import static
@@ -36,8 +36,10 @@ urlpatterns = [
     path('edit_transaction/<int:pk>/', edit_transaction, name='edit_transaction'),
     path('delete_transaction/<int:pk>/', delete_transaction, name='delete_transaction'),
     path('budget-goals/add/', add_budget_goal, name='add_budget_goal'),
-    path('budget-goals/edit/<int:budget_goal_id>/', edit_budget_goal, name='edit_budget_goal'),
-    path('budget-goals/delete/<int:budget_goal_id>/', delete_budgetgoal, name='delete_budget_goal'),
+    path('budget-goals/edit/<int:pk>/', edit_budget_goal, name='edit_budget_goal'),
+    path('budget-goals/delete/<int:pk>/', delete_budgetgoal, name='delete_budget_goal'),
+
+    path('accounts/', include('allauth.urls')),
 
 ]
 

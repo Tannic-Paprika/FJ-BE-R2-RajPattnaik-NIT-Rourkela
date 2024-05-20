@@ -9,7 +9,7 @@ class IncomeSourceForm(forms.ModelForm):
 class ExpenseCategoryForm(forms.ModelForm):
     class Meta:
         model = Expenses
-        fields = ['category', 'amount']
+        fields = ['category', 'amount','date']
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -19,4 +19,4 @@ class TransactionForm(forms.ModelForm):
 class BudgetGoalForm(forms.ModelForm):
     class Meta:
         model = BudgetGoal
-        fields = ['category', 'goal_amount']
+        fields = ['category', 'goal_amount',]
