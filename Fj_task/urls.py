@@ -38,6 +38,7 @@ urlpatterns = [
     path('budget-goals/add/', add_budget_goal, name='add_budget_goal'),
     path('budget-goals/edit/<int:pk>/', edit_budget_goal, name='edit_budget_goal'),
     path('budget-goals/delete/<int:pk>/', delete_budgetgoal, name='delete_budget_goal'),
+    path('financial-advice/', financial_advice, name='financial_advice'),
 
     path('accounts/', include('allauth.urls')),
 

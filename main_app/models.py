@@ -16,10 +16,19 @@ class Expenses(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     category = models.CharField(max_length=255)
     amount = models.DecimalField(max_digits=10, decimal_places=2)
-    date = models.DateField()  # Add this line
+    date = models.DateField() 
+    shared_by = models.PositiveIntegerField(default=1)
+    receipt = models.FileField(upload_to='receipts/', null=True, blank=True)  
 
     def __str__(self):
-        return self.category
+        return f"{self.amount} / {self.shared_by}"
+    
+    @property
+    def split_amount(self):
+        if self.shared_by > 0:
+            return self.amount / self.shared_by
+        return self.amount
+    
 
 class Transactions(models.Model):
     user=  models.ForeignKey(User, on_delete=models.CASCADE)

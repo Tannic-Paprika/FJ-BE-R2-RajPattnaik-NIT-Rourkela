@@ -42,7 +42,7 @@
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <div>
                                 <strong>{{ expense.category }}</strong><br>
-                                <span class="badge badge-danger">{{ expense.amount }}</span>
+                                <span class="badge badge-danger">{{ expense.split_amount }}</span>
                             </div>
                             <div>
                                 <a href="{% url 'edit_expense' expense.id %}" class="btn btn-sm btn-warning">Edit</a>
@@ -138,6 +138,9 @@
                 </table>
             </div>
         </div>
+
+        <!-- Financial Advice Button -->
+        <a href="{% url 'financial_advice' %}" class="btn">Get Financial Advice</a>
     </div>
 
     <!-- Chart.js Scripts -->

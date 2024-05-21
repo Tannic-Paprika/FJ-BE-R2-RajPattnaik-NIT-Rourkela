@@ -9,7 +9,7 @@
 </head>
 <body>
     <h1>Add/Edit Expense</h1>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">  <!-- Add enctype attribute -->
         {% csrf_token %}
         {{ form.as_p }}
         <button type="submit">Save</button>

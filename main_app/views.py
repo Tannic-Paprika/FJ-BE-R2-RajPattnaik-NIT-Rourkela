@@ -8,6 +8,8 @@ from django.db.models import Sum,F
 from django.db.models.functions import TruncMonth
 from .models import *
 from django.core.mail import send_mail
+import openai
+from django.conf import settings
 
 @login_required
 def home(request):
@@ -17,12 +19,12 @@ def home(request):
     budget_goals = BudgetGoal.objects.filter(user=request.user)
 
     total_income = sum(income.amount for income in incomes)
-    total_expenses = sum(expense.amount for expense in expenses)
+    total_expenses = sum(expense.split_amount for expense in expenses)
     total_savings = total_income - total_expenses
 
     monthly_income = incomes.annotate(month=TruncMonth('date')).values('month').annotate(total=Sum('amount')).order_by('month')
-    monthly_expenses = expenses.annotate(month=TruncMonth('date')).values('month').annotate(total=Sum('amount')).order_by('month')
-
+    monthly_expenses = expenses.annotate(month=TruncMonth('date')).values('month').annotate(total=Sum(F('amount') / F('shared_by'))).order_by('month')
+    
     context = {
         'incomes': incomes,
         'expenses': expenses,
@@ -181,6 +183,31 @@ def send_budget_overrun_notification(email, category, goal_amount, total_expense
     subject = 'Budget Overrun Notification'
     message = f'Your expenses for category {category} have exceeded the budget goal. \n\nBudget Goal: {goal_amount} \nTotal Expenses: {total_expenses}'
     send_mail(subject, message, 'tannicpaprika@gmail.com', [email])
+
+@login_required
+def financial_advice(request):
+    # Gather user's financial data here
+    user = request.user
+    # Fetch user's financial data from the database (e.g., incomes, expenses, etc.)
+
+    # Prepare financial data to send to ChatGPT
+    # This is just an example prompt, you can adjust it based on your needs
+    prompt = f"User: {user.username}. Financial data: ..."
+    
+    # Generate advice from ChatGPT
+    openai.api_key = settings.OPENAI_API_KEY
+    response = openai.Completion.create(
+        engine="text-davinci-003",
+        prompt=prompt,
+        max_tokens=200,
+        n=1,
+        stop=None,
+        temperature=0.7,
+    )
+    advice = response.choices[0].text.strip()
+
+    # Render the financial advice template with the advice
+    return render(request, 'financial_advice.html', {'advice': advice})
 
 @login_required
 def login_page(request):

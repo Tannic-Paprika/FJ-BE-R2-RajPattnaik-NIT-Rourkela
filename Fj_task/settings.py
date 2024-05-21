@@ -27,7 +27,7 @@ SECRET_KEY = "django-insecure-!mee$v*t461-@*!9#yy-g)u4lh(kjfqjx0dv#sb@k)s24xu6bs
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+OPENAI_API_KEY= "sk-proj-9Kc9hvUsHMXFK70tWbQoT3BlbkFJqSwh7eqvdIxNn7fqXjRy"
 
 
 # Application definition
@@ -94,12 +94,15 @@ WSGI_APPLICATION = "Fj_task.wsgi.application"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'mydatabase',
+        'USER': 'myuser',
+        'PASSWORD': 'mypassword',
+        'HOST': 'localhost',
+        'PORT': '3306',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators

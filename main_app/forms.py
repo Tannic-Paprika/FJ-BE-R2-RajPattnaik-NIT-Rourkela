@@ -9,7 +9,7 @@ class IncomeSourceForm(forms.ModelForm):
 class ExpenseCategoryForm(forms.ModelForm):
     class Meta:
         model = Expenses
-        fields = ['category', 'amount','date']
+        fields = ['category', 'amount','date','shared_by','receipt']
 
 class TransactionForm(forms.ModelForm):
     class Meta:
@@ -20,3 +20,6 @@ class BudgetGoalForm(forms.ModelForm):
     class Meta:
         model = BudgetGoal
         fields = ['category', 'goal_amount',]
+
+class FinancialAdviceForm(forms.Form):
+    query = forms.CharField(widget=forms.Textarea, label="Your Question")
