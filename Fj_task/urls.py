@@ -22,8 +22,10 @@ from django.conf.urls.static import static
 from django.contrib.staticfiles.urls import staticfiles_urlpatterns
 
 urlpatterns = [
+    path('', include('main_app.urls')),
     path('home/', home, name='home'),
     path('admin/', admin.site.urls),
+    path('accounts/', include('allauth.urls')),
     path('login/', login_page, name='login_page'),
     path('register/', register_page, name='register'),
     path('add_income/', add_income, name='add_income'),
@@ -39,8 +41,6 @@ urlpatterns = [
     path('budget-goals/edit/<int:pk>/', edit_budget_goal, name='edit_budget_goal'),
     path('budget-goals/delete/<int:pk>/', delete_budgetgoal, name='delete_budget_goal'),
     path('financial-advice/', financial_advice, name='financial_advice'),
-
-    path('accounts/', include('allauth.urls')),
 
 ]
 

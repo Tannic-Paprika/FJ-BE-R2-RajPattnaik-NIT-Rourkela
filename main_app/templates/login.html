@@ -5,15 +5,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-    <h2>Login</h2>
-    <form method="post" action="{% url 'account_login' %}">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Login</button>
-    </form>
-    <hr>
-    <a href="{% provider_login_url 'google' %}">Login with Google</a>
+    <div class="container">
+        <div class="login-container">
+            <h2 class="login-title">Login with Google</h2>
+            <div class="social-login">
+                <a href="{% provider_login_url 'google' %}" class="btn btn-google">Login with Google</a>
+            </div>
+        </div>
+    </div>
 </body>
 </html>

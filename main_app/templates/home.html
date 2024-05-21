@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    <link rel="stylesheet" href="styles.css">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
@@ -77,8 +78,10 @@
         <!-- Budget Goals Section -->
         <div class="row">
             <div class="column">
-                <h2 class="mb-3">Budget Goals</h2>
-                <a href="{% url 'add_budget_goal' %}" class="btn btn-primary mb-2">Add Budget Goal</a>
+                <div class="header-container">
+                    <h2 class="mb-3">Budget Goals</h2>
+                    <a href="{% url 'add_budget_goal' %}" class="btn btn-primary mb-3">Add Budget Goal</a>
+                </div>
                 <ul class="list-group">
                     {% for goal in budget_goals %}
                         <li class="list-group-item d-flex justify-content-between align-items-center">
@@ -95,6 +98,7 @@
                 </ul>
             </div>
         </div>
+
 
         <!-- Charts Section -->
         <div class="row">

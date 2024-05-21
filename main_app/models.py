@@ -26,7 +26,7 @@ class Expenses(models.Model):
     @property
     def split_amount(self):
         if self.shared_by > 0:
-            return self.amount / self.shared_by
+            return round(self.amount / self.shared_by, 2)
         return self.amount
     
 
